@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { ref } from 'lit/directives/ref.js';
 
 /**
  * Now it's your turn. Here's what we need to try and do:
@@ -14,14 +15,10 @@ export class MyCard extends LitElement {
 
   constructor() {
     super();
-    this.title = "Saquon Barkley";
-    this.image = "https://www.philly.com/resizer/eo2Cg-MSE2qI7xkkGDRPslLHNFY=/1400x932/smart/arc-anglerfish-arc2-prod-pmn.s3.amazonaws.com/public/3FXVFASYGFH3TMKNO7CGDN3ZEQ.jpg";
-    this.backgroundColor = "#3333FF";
-    this.link = "https://iam.hax.psu.edu/nch5296/sites/ist256hw2/page-1";
-  }
-
-  render() {
-    return html`<div>${this.title}</div>`;
+    this.title = "#";
+    this.image = "#";
+    this.backgroundColor = "#";
+    this.link = "#";
   }
 
   static get properties() {
@@ -30,6 +27,7 @@ export class MyCard extends LitElement {
       image: { type: String },
       backgroundColor: { type: String },
       link: { type: String },
+      fancy: { type: Boolean, reflect: true },
     };
   }
   static get styles() 
@@ -37,13 +35,18 @@ export class MyCard extends LitElement {
     return css`
       :host {
         display: block;
-        width: 100%;
-        max-width: 400px;
+        width: 50%;
+        max-width: 200px;
         border: 6px solid black;
         border-radius: 8px;
         padding: 16px;
         background-color: var(--card-bg, #3333FF);
         margin: 16px;
+      }
+        :host([fancy]) 
+        {
+        background-color: purple;
+        border: 6px solid black;
       }
     img {
           width: 100%;
@@ -71,21 +74,42 @@ export class MyCard extends LitElement {
         a:hover {
           background-color: #0056b3;
         }
+          .toggle-button {
+        margin-top: 16px;
+        padding: 8px 16px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+        openChanged(event) 
+        {
+    this.fancy = event.target.open;
+  }
       `;
   }
   render() 
   {
     return html`
-      <div style="background-color: ${this.backgroundColor}; padding: 16px; border-radius: 8px;">
-        <img src="${this.image}" alt="${this.title}">
-        <section>
-          <h2>${this.title}</h2>
-          <p><strong>College:</strong> Penn State</p>
-          <p><strong>Position:</strong> Running Back</p>
-          <a href="${this.link}" class="details-btn">Details</a>
-        </section>
+    <div id="cardlist">
+        <div class="card">
+          <h1 class="cardheader"><b>${this.title}</b></h1>
+          <img src=${this.image} alt=${this.title} />
+          <details ?open="${this.fancy}" @toggle="${this.openChanged}">
+            <summary>Description</summary>
+            <div>
+              <slot></slot>
+              <a href=${this.link} target="_blank">
+                <button class="btn"><em>Link for more info</em></button>
+              </a>
+            </div>
+          </details>
+          <button class="toggle-button" @click="${this.toggleFancy}">
+            ${this.fancy ? 'Make Regular' : 'Make Fancy'}
+          </button>
       </div>
-    `;
+    </div>`;
   }
 }
 
